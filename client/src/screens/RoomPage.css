@@ -1,0 +1,130 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  header {
+    background-color: #6200ea;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .status {
+    font-size: 0.9em;
+  }
+  
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .video-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #6200ea;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+  }
+  
+  video {
+    width: 300px;
+    height: 200px;
+    border-radius: 10px;
+    background-color: black;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: space-around;
+    width: 50%;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:nth-child(1) { background-color: #ff5722; color: white; }
+  button:nth-child(2) { background-color: #03a9f4; color: white; }
+  button:nth-child(3) { background-color: #f44336; color: white; }
+  button:nth-child(4) { background-color: #8bc34a; color: white; }
+  
+  aside.chat {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    background-color: white;
+    border-left: 2px solid #6200ea;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+  
+  aside.chat.open {
+    transform: translateX(0);
+  }
+  
+  .chat h2 {
+    background-color: #6200ea;
+    color: white;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #f0f0f0;
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px;
+    width: calc(100% - 40px);
+  }
+  
+  button {
+    background-color: #6200ea;
+    color: white;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+  }
+  

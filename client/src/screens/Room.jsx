@@ -1,12 +1,55 @@
 import React, {useState,useEffect,useCallback} from "react";
+import './RoomPage.css';
 import ReactPlayer from 'react-player'
 import peer from "../service/peer";
 import {useSocket} from "../context/SocketProvider";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMicrophone, faVideo } from '@fortawesome/free-solid-svg-icons';
+
 const RoomPage= () => {
     const socket=useSocket();
     const [remoteSocketId,setRemoteSocketId]=useState(null);
     const [myStream,setMyStream] = useState();
     const [remoteStream,setRemoteStream] = useState();
+    const [isMuted, setIsMuted] = useState(false);
+    const [isVideoOn, setIsVideoOn] = useState(true);
+    const [messages, setMessages] = useState([]);
+    const [message, setMessage] = useState('');
+    const [isChatOpen, setIsChatOpen] = useState(false);
+
+    const toggleMute = () => {
+        setIsMuted(prev => !prev);
+        if (myStream) {
+            myStream.getAudioTracks().forEach(track => {
+                track.enabled = !isMuted;
+            });
+        }
+    };
+
+    const toggleVideo = () => {
+        setIsVideoOn(prev => !prev);
+        if (myStream) {
+            myStream.getVideoTracks().forEach(track => {
+                track.enabled = !isVideoOn;
+            });
+        }
+    };
+
+    const toggleChat = () => {
+        setIsChatOpen(prev => !prev);
+    };
+
+    const handleMessageChange = (event) => {
+        setMessage(event.target.value);
+    };
+
+    const sendMessage = () => {
+        if (message.trim() !== '') {
+            setMessages(prevMessages => [...prevMessages, { content: message, from: 'me' }]);
+            socket.emit('chat:message', { content: message, from: 'me' });
+            setMessage('');
+        }
+    };
 
     const handleUserJoined=useCallback(({email,id}) => {
         console.log(`Email ${email} joined room`);
@@ -95,36 +138,67 @@ const RoomPage= () => {
         }
     },[socket,handleUserJoined,handleIncomingCall,handleCallAccepted,handleNegoNeedIncoming,handleNegoNeedFinal]);
 
-    return(
-        <div>
-        <h1>RoomPage</h1>
-        <h4>{remoteSocketId ? 'Connected' : 'No one in room'}</h4>
-        {myStream && <button onClick={sendStreams}>Send Stream</button>}
-        {remoteSocketId && <button onClick={handleCallUser}>CALL</button>}
-        {
-            myStream && (
-            <>
-            <h1>My Stream</h1>
-            <ReactPlayer 
-            playing 
-            muted 
-            height="300px" 
-            width="300px" 
-            url={myStream} />
-            </>
-        )}
-        {
-            remoteStream && (
-                <>
-                <h1>Remote Stream</h1>
-                <ReactPlayer 
-                playing 
-                muted 
-                height="300px" 
-                width="300px" 
-                url={remoteStream} />
-                </>
-        )}
+    return (
+        <div className="room-container"> {/* Add a container with a class name */}
+            <h1>RoomPage</h1>
+            <h4>{remoteSocketId ? 'Connected' : 'No one in room'}</h4>
+            {myStream && <button onClick={sendStreams}>Send Stream</button>}
+            {remoteSocketId && <button onClick={handleCallUser}>CALL</button>}
+            <div>
+                {/* Mute/Unmute button */}
+                <button onClick={toggleMute}>
+                    
+                    {isMuted ? 'Unmute' : 'Mute'}
+                </button>
+                {/* Toggle video button */}
+                <button onClick={toggleVideo}>
+                    {isVideoOn ? 'Turn Video Off' : 'Turn Video On'}
+                </button>
+                {/* Toggle chat button */}
+                <button onClick={toggleChat}>
+                    {isChatOpen ? 'Close Chat' : 'Open Chat'}
+                </button>
+            </div>
+            {
+                myStream && (
+                    <>
+                        <h1>My Stream</h1>
+                        <ReactPlayer
+                            playing
+                            muted
+                            height="300px"
+                            width="300px"
+                            url={myStream} />
+                    </>
+                )}
+            {
+                remoteStream && (
+                    <>
+                        <h1>Remote Stream</h1>
+                        <ReactPlayer
+                            playing
+                            muted
+                            height="300px"
+                            width="300px"
+                            url={remoteStream} />
+                    </>
+                )}
+                {isChatOpen && (
+                <div className="chat-box">
+                    <ul>
+                        {messages.map((msg, index) => (
+                            <li key={index}>{msg.from}: {msg.content}</li>
+                        ))}
+                    </ul>
+                    <input
+                        type="text"
+                        value={message}
+                        onChange={handleMessageChange}
+                        placeholder="Type your message..."
+                    />
+                    <button onClick={sendMessage}>Send</button>
+                </div>
+            )}
         </div>
     )
 }
